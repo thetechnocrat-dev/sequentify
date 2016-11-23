@@ -10,7 +10,7 @@ import (
 )
 
 func corsHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Access-Control-Allow-Origin", "http://sequentify.com")
 	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS, POST")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 }
