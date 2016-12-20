@@ -1,2 +1,2 @@
 # Sequentify API
-Restful api to align DNA sequences.
+Single page React app to align DNA sequences.
