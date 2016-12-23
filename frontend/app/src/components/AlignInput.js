@@ -30,7 +30,7 @@ class AlignInput extends Component {
   }
 
   clickAlign() {
-    console.log('pls')
+    console.log(process.env)
     var seqA = ReactDOM.findDOMNode(this.refs.formA).value;
     var seqB = ReactDOM.findDOMNode(this.refs.formB).value;
     var errorsA = this.validateInput(seqA);

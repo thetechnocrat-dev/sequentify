@@ -18,4 +18,4 @@ services:
     ports:
       - "5000:3000"
     volumes:
-      - ./api/src/:/src 
+      - ./frontend/app/src:/app/src 
