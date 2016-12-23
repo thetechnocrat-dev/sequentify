@@ -11,9 +11,9 @@ import (
 
 func getFrontendUrl() string {
 	if os.Getenv("ENV") == "production" {
-		return os.Getenv("FRONTEND_PROD_URL")
+		return "http://api.sequentify.com"
 	} else {
-		return os.Getenv("FRONTEND_DEV_URL")
+		return "http://localhost:5000"
 	}
 }
 

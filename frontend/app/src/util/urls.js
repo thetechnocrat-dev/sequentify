@@ -1,12 +1,12 @@
 var Urls = {};
 
-if (process.env.ENV === "production") {
+if (process.env.NODE_ENV === 'production') {
   Urls = {
-    api: process.env.API_PROD_URL,
+    api: 'http://api.sequentify.com',
   };
-} else { // defaults to dev to make setting up locally easier
+} else if (process.env.NODE_ENV === 'development') {
   Urls = {
-    api: process.env.API_DEV_URL,
+    api: 'http://localhost:3000',
   };
 }
 
