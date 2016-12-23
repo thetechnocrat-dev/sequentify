@@ -1,14 +1,20 @@
 FROM node
 ENV NPM_CONFIG_LOGLEVEL warn
 
-RUN npm install -g http-server
 RUN mkdir -p /app
 WORKDIR /app
 
 COPY /app/ ./
 RUN npm install
-RUN npm run build
 
-CMD cd build && hs
+CMD if [ ${ENV} = "production" ]; \
+	then \
+	npm install -g http-server && \
+	npm run build && \
+	cd build && \
+	hs -p 3000; \
+	else \
+	npm run start; \
+	fi
 
-EXPOSE 8080
+EXPOSE 3000

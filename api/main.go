@@ -6,10 +6,20 @@ import (
 	"github.com/McMenemy/aligner"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
+	"os"
 )
 
+func getFrontendUrl() string {
+	if os.Getenv("ENV") == "production" {
+		return os.Getenv("FRONTEND_PROD_URL")
+	} else {
+		return os.Getenv("FRONTEND_DEV_URL")
+	}
+}
+
 func corsHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	w.Header().Set("Access-Control-Allow-Origin", "http://sequentify.com")
+	frontendUrl := getFrontendUrl()
+	w.Header().Set("Access-Control-Allow-Origin", frontendUrl)
 	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS, POST")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 }
@@ -25,13 +35,15 @@ func alignHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	if err != nil {
 		panic(err)
 	}
+
 	alignment := aligner.Align(seqs.SeqA, seqs.SeqB)
 	res, err := json.Marshal(alignment)
 	if err != nil {
 		panic(err)
 	}
 
-	w.Header().Set("Access-Control-Allow-Origin", "http://sequentify.com")
+	frontendUrl := getFrontendUrl()
+	w.Header().Set("Access-Control-Allow-Origin", frontendUrl)
 	w.Header().Set("Access-Control-Allow-Methods", "POST")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Content-Type", "application/json")

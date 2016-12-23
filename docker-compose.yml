@@ -1,0 +1,21 @@
+version: '2'
+services:
+  api:
+    build: ./api
+    environment:
+      - ENV
+      - FRONTEND_DEV_URL=http://localhost:5000
+      - FRONTEND_PROD_URL=http://sequentify.com
+    ports:
+      - "3000:8080"
+
+  frontend:
+    build: ./frontend
+    environment:
+      - ENV
+      - API_DEV_URL=http://localhost:3000
+      - API_PROD_URL=http://api.sequentify.com
+    ports:
+      - "5000:3000"
+    volumes:
+      - ./api/src/:/src 

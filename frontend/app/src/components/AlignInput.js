@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 import { DropdownButton, MenuItem, Alert, Row, Col, FormGroup, FormControl, Button } from 'react-bootstrap/lib';
-import Sequences from '../sequences';
+import Sequences from '../util/sequences';
+import Urls from '../util/urls';
 
 // custom components
 
@@ -29,13 +30,14 @@ class AlignInput extends Component {
   }
 
   clickAlign() {
+    console.log('pls')
     var seqA = ReactDOM.findDOMNode(this.refs.formA).value;
     var seqB = ReactDOM.findDOMNode(this.refs.formB).value;
     var errorsA = this.validateInput(seqA);
     var errorsB = this.validateInput(seqB);
     if (errorsA.length === 0 && errorsB.length === 0) {
       this.setState({ errorsA: [], errorsB: [], isLoading: true });
-      axios.post('http://api.sequentify.com/align', {
+      axios.post(`${Urls.api}/align`, {
           SeqA: seqA.toLowerCase().replace(/\s/g, ''),
           SeqB: seqB.toLowerCase().replace(/\s/g, ''),
         })
