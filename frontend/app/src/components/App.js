@@ -1,20 +1,17 @@
 import React, { Component } from 'react';
-import Style from '../style';
 import { Grid, Panel } from 'react-bootstrap/lib';
-
-// custom components
 import AlignInput from './AlignInput';
 import AlignOutput from './AlignOutput';
+import Style from '../style';
 
 class App extends Component {
-  state = {
-    windowWidth: window.innerWidth,
-    windowHeight: window.innerHeight,
-    output: [""],
-  };
-
-  handleResize() {
-    this.setState({ windowWidth: window.innerWidth, windowHeight: window.innerHeight });
+  constructor(props) {
+    super(props);
+    this.state = {
+      windowWidth: window.innerWidth,
+      windowHeight: window.innerHeight,
+      output: [''],
+    };
   }
 
   componentDidMount() {
@@ -25,15 +22,19 @@ class App extends Component {
     window.removeEventListener('resize', this.handleResize.bind(this));
   }
 
+  handleResize() {
+    this.setState({ windowWidth: window.innerWidth, windowHeight: window.innerHeight });
+  }
+
   updateOutput(newOutput) {
-    this.setState({ output: newOutput })
+    this.setState({ output: newOutput });
   }
 
   render() {
-    var width;
-    var minHeight;
-    var marginTop;
-    var sectionHeight;
+    let width;
+    let minHeight;
+    let marginTop;
+    let sectionHeight;
     if (this.state.windowWidth < Style.xsCutoff) {
       width = '100%';
       minHeight = this.state.windowHeight;
@@ -56,21 +57,21 @@ class App extends Component {
       marginTop = this.state.windowHeight * 0.05;
     }
 
-    var panelStyle = {
-      width: width,
+    const panelStyle = {
+      width,
       margin: 'auto',
-      marginTop: marginTop,
-      minHeight: minHeight,
-    }
+      marginTop,
+      minHeight,
+    };
 
-    var gridStyle = {
+    const gridStyle = {
       width: '100%',
       height: '100%',
-    }
+    };
 
     const panelTitle = (
       <h3>Sequentify DNA Sequence Aligner</h3>
-    )
+    );
 
     return (
       <Panel style={panelStyle} header={panelTitle} bsStyle="primary">

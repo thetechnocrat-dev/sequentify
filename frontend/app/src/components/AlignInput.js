@@ -8,81 +8,90 @@ import Urls from '../util/urls';
 // custom components
 
 class AlignInput extends Component {
-  state = {
-    isLoading: false,
-    titleA: 'Select an Example Sequence',
-    titleB: 'Select an Example Sequence',
-    errorsA: [],
-    errorsB: [],
-  };
-
-  validateInput(seq) {
-    var errors = [];
-    if (seq.length === 0) {
-      errors.push('Input sequence is required');
-    }
-
-    if (!seq.match(/^[gctaGCTA\s]+$/)) {
-      errors.push('Input sequence can only contain a, t, c, g, A, T, C, or G.');
-    }
-
-    return errors;
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoading: false,
+      titleA: 'Select an Example Sequence',
+      titleB: 'Select an Example Sequence',
+      errorsA: [],
+      errorsB: [],
+    };
   }
 
   clickAlign() {
-    var seqA = ReactDOM.findDOMNode(this.refs.formA).value;
-    var seqB = ReactDOM.findDOMNode(this.refs.formB).value;
-    var errorsA = this.validateInput(seqA);
-    var errorsB = this.validateInput(seqB);
+    function validateInput(seq) {
+      const errors = [];
+      if (seq.length === 0) {
+        errors.push('Input sequence is required');
+      }
+
+      if (!seq.match(/^[gctaGCTA\s]+$/)) {
+        errors.push('Input sequence can only contain a, t, c, g, A, T, C, or G.');
+      }
+
+      return errors;
+    }
+
+    const seqA = ReactDOM.findDOMNode(this.refs.formA).value;
+    const seqB = ReactDOM.findDOMNode(this.refs.formB).value;
+    const errorsA = validateInput(seqA);
+    const errorsB = validateInput(seqB);
     if (errorsA.length === 0 && errorsB.length === 0) {
       this.setState({ errorsA: [], errorsB: [], isLoading: true });
       axios.post(`${Urls.api}/align`, {
-          SeqA: seqA.toLowerCase().replace(/\s/g, ''),
-          SeqB: seqB.toLowerCase().replace(/\s/g, ''),
-        })
-        .then(response => {
+        SeqA: seqA.toLowerCase().replace(/\s/g, ''),
+        SeqB: seqB.toLowerCase().replace(/\s/g, ''),
+      })
+        .then((response) => {
           this.setState({ isLoading: false });
           this.props.updateOutput(response.data);
-        }
+        },
       )
-        .catch(error => {
+        .catch(() => {
           this.setState({ isLoading: false, errors: ['Server error try refreshing the page'] });
-        }
+        },
       );
     } else {
-      this.setState({ errorsA: errorsA, errorsB: errorsB });
+      this.setState({ errorsA, errorsB });
     }
   }
 
   handleSequenceChange(seqKey, e) {
-    var newState = {};
+    const newState = {};
     newState[seqKey] = e.target.value;
-    this.setState(newState); 
+    this.setState(newState);
   }
 
   makeErrorAlert(errorKey) {
     if (this.state[errorKey].length > 0) {
       return (
         <Alert bsStyle="warning">
-          {this.state[errorKey].join('\n')} 
+          {this.state[errorKey].join('\n')}
         </Alert>
       );
     }
+    return <div />;
   }
 
   clickSeqItem(ref, sequence, name, titleKey) {
+    const newState = {};
     ReactDOM.findDOMNode(this.refs[ref]).value = sequence;
-    var newState = {};
     newState[titleKey] = name;
     this.setState(newState);
   }
 
   makeSeqMenuItems(ref, titleKey) {
-    return Sequences.map((seq, i) => {
-      return <MenuItem key={i} onClick={this.clickSeqItem.bind(this, ref, seq.sequence, seq.name, titleKey)}>{seq.name}</MenuItem>;
-    });
+    return Sequences.map((seq, i) =>
+      <MenuItem
+        key={i}
+        onClick={this.clickSeqItem.bind(this, ref, seq.sequence, seq.name, titleKey)}
+      >
+        {seq.name}
+      </MenuItem>,
+    );
   }
-  
+
   makeSeqDropwdown(ref, titleKey) {
     return (
       <DropdownButton
@@ -96,7 +105,7 @@ class AlignInput extends Component {
     );
   }
 
-  render () {
+  render() {
     return (
       <Row>
         <Col xs={12} sm={6}>
@@ -112,7 +121,7 @@ class AlignInput extends Component {
             />
           </FormGroup>
         </Col>
-        
+
         <Col xs={12} sm={6}>
           {this.makeErrorAlert('errorsA')}
           {this.makeSeqDropwdown('formB', 'titleB')}
@@ -138,13 +147,13 @@ class AlignInput extends Component {
           </Button>
         </Col>
       </Row>
-    )
+    );
   }
 }
 
 AlignInput.propTypes = {
   updateOutput: React.PropTypes.func.isRequired,
   height: React.PropTypes.number.isRequired,
-}
+};
 
 export default AlignInput;
