@@ -15,28 +15,19 @@ class Helix extends Component {
     function move(particle) {
       let y = (height / 4) * Math.sin(particle.x / 100);
       if (particle.mirror) { y *= -1; }
-      if (particle.y <= 0 + 2 * particle.radius && y > 0 + 2 * particle.radius) {
-        particle.zIndex *= -1;
-      }
-      particle.y = y;
       ctx.beginPath();
       ctx.fillStyle = particle.fill;
       ctx.arc(particle.x, y + (height / 2), particle.radius, 0, 2 * Math.PI, false);
       ctx.fill();
       if (particle.x >= width + particle.radius) {
         particle.x = -20;
-        if (particle.mirror) {
-          particle.zIndex = 1;
-        }
       } else {
         particle.x += 1;
       }
     }
 
-    const sortedParticles = particles.sort((p1, p2) => p1.zIndex > p2.zIndex);
-
     ctx.clearRect(0, 0, width, height);
-    sortedParticles.forEach((particle) => {
+    particles.forEach((particle) => {
       move(particle);
     });
 
@@ -56,19 +47,24 @@ class Helix extends Component {
     const spread = radius * 3;
     let particles = [];
     for (let x = -radius; x <= width; x += spread) {
-      particles.push(createParticle(x, radius, { zIndex: 0 }));
+      // const y = (height / 4) * Math.sin(x / 100);
+      const fill = Style.blue;
+      particles.push(createParticle(x, radius, { fill, zIndex: 0 }));
     }
 
     let zIndex = 1;
-    let yPrev = (height / -4) * Math.sin(-radius / 100);
+    let prevY = (height / -4) * Math.sin(-radius / 100);
+    const fill = 'black';
     for (let x = -radius; x <= this.props.width; x += spread) {
-      const y = (height / 4) * Math.sin(x / 100);
-      if (yPrev <= 0 + 2 * radius && y > 0 + 2 * radius) {
+      const y = (height / -4) * Math.sin(x / 100);
+      if (prevY <= 2 * radius && y > 2 * radius) {
         zIndex *= -1;
       }
-      yPrev = y;
-      particles.push(createParticle(x, radius, { mirror: true, fill: 'black', zIndex, y }));
+      prevY = y;
+      particles.push(createParticle(x, radius, { mirror: true, fill, zIndex }));
     }
+
+    particles = particles.sort((p1, p2) => p1.zIndex < p2.zIndex);
 
     const ctx = this.refs.canvas.getContext('2d');
     particles = particles.sort((p1, p2) => p2.zIndex > p1.zIndex);
