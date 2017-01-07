@@ -3,7 +3,11 @@ const Style = {
   smCutoff: 991,
   mdCutoff: 1200, // lg will be anything over 1200
   minHeightCutoff: 500,
-  blue: '#337ab7',
+  dark_primary: '#303F9F',
+  primary: '#3F51B5',
+  light_primary: '#C5CAE9',
+  accent: '#00BCD4',
+  background: '#edeef8',
 };
 
 export default Style;

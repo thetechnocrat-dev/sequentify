@@ -139,7 +139,7 @@ class AlignInput extends Component {
         <Col xs={12} style={{ textAlign: 'center' }}>
           <Button
             onClick={this.clickAlign.bind(this)}
-            bsStyle="success"
+            bsStyle="accent"
             style={{ margin: '-5px 0px 10px 0px' }}
             disabled={this.state.isLoading}
           >

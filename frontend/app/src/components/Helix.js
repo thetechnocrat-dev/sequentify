@@ -37,7 +37,7 @@ class Helix extends Component {
   initHelix() {
     const { width, height } = this.props;
     function createParticle(x, radius, options = {}) {
-      if (!options.fill) { options.fill = Style.blue; }
+      if (!options.fill) { options.fill = Style.primary; }
 
       const particle = { x, radius, ...options };
       return particle;
@@ -46,16 +46,15 @@ class Helix extends Component {
     const radius = height / 10;
     const spread = radius * 3;
     let particles = [];
-    for (let x = -radius; x <= width; x += spread) {
-      // const y = (height / 4) * Math.sin(x / 100);
-      const fill = Style.blue;
+    for (let x = -radius; x <= width + radius; x += spread) {
+      const fill = Style.primary;
       particles.push(createParticle(x, radius, { fill, zIndex: 0 }));
     }
 
     let zIndex = 1;
     let prevY = (height / -4) * Math.sin(-radius / 100);
     const fill = 'black';
-    for (let x = -radius; x <= this.props.width; x += spread) {
+    for (let x = -radius; x <= this.props.width + radius; x += spread) {
       const y = (height / -4) * Math.sin(x / 100);
       if (prevY <= 2 * radius && y > 2 * radius) {
         zIndex *= -1;

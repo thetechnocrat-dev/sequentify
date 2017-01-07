@@ -4,6 +4,7 @@ import AlignInput from './AlignInput';
 import AlignOutput from './AlignOutput';
 import Helix from './Helix';
 import Style from '../style';
+import TopNavbar from './TopNavbar';
 
 class App extends Component {
   constructor(props) {
@@ -34,34 +35,28 @@ class App extends Component {
   render() {
     let width;
     let minHeight;
-    let marginTop;
     let sectionHeight;
     if (this.state.windowWidth < Style.xsCutoff) {
       width = '100%';
       minHeight = this.state.windowHeight;
       sectionHeight = minHeight * 0.2;
-      marginTop = 0;
     } else if (this.state.windowWidth < Style.smCutoff) {
       width = '723px';
       minHeight = this.state.windowHeight * 0.9;
       sectionHeight = minHeight * 0.4;
-      marginTop = this.state.windowHeight * 0.05;
     } else if (this.state.windowWidth < Style.mdCutoff) {
       width = '933px';
       minHeight = this.state.windowHeight * 0.8;
       sectionHeight = minHeight * 0.4;
-      marginTop = this.state.windowHeight * 0.05;
     } else {
       width = '1127px';
       minHeight = this.state.windowHeight * 0.8;
       sectionHeight = minHeight * 0.4;
-      marginTop = this.state.windowHeight * 0.05;
     }
 
     const panelStyle = {
       width,
       margin: 'auto',
-      marginTop,
       minHeight,
     };
 
@@ -70,16 +65,25 @@ class App extends Component {
       height: '100%',
     };
 
-    const panelTitle = (
-      <h3>Sequentify DNA Sequence Aligner</h3>
-    );
-
-    const helixHeight = 80;
+    const helixHeight = 60;
 
     return (
       <div>
+        <TopNavbar />
+        <style type="text/css">{`
+          .btn-primary {
+            background-color: ${Style.primary};
+            color: white;
+          }
+        `}</style>
+        <style type="text/css">{`
+          .btn-accent {
+            background-color: ${Style.accent};
+            color: white;
+          }
+        `}</style>
         <Helix width={this.state.windowWidth} height={helixHeight} />
-        <Panel style={panelStyle} header={panelTitle} bsStyle="primary">
+        <Panel style={panelStyle} bsStyle="primary">
           <Grid style={gridStyle}>
             <AlignInput updateOutput={this.updateOutput.bind(this)} height={sectionHeight} />
             <AlignOutput output={this.state.output} height={sectionHeight} />
