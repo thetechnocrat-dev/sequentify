@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Grid, Panel } from 'react-bootstrap/lib';
 import AlignInput from './AlignInput';
 import AlignOutput from './AlignOutput';
+import Helix from './Helix';
 import Style from '../style';
 
 class App extends Component {
@@ -73,13 +74,18 @@ class App extends Component {
       <h3>Sequentify DNA Sequence Aligner</h3>
     );
 
+    const helixHeight = 80;
+
     return (
-      <Panel style={panelStyle} header={panelTitle} bsStyle="primary">
-        <Grid style={gridStyle}>
-          <AlignInput updateOutput={this.updateOutput.bind(this)} height={sectionHeight} />
-          <AlignOutput output={this.state.output} height={sectionHeight} />
-        </Grid>
-      </Panel>
+      <div>
+        <Helix width={this.state.windowWidth} height={helixHeight} />
+        <Panel style={panelStyle} header={panelTitle} bsStyle="primary">
+          <Grid style={gridStyle}>
+            <AlignInput updateOutput={this.updateOutput.bind(this)} height={sectionHeight} />
+            <AlignOutput output={this.state.output} height={sectionHeight} />
+          </Grid>
+        </Panel>
+      </div>
     );
   }
 }
