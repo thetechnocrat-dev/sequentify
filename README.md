@@ -1,4 +1,2 @@
-# Sequentify API
-Web app to align DNA sequences.
-
-
+# Sequentify Web App
+A web app to align DNA sequences.
