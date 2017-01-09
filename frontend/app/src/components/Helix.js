@@ -10,7 +10,7 @@ class Helix extends Component {
     this.initHelix();
   }
 
-  animateHelix(ctx, particles) {
+  animateHelix(ctx, particles, rightBound, spread) {
     const { height, width } = this.props;
     function move(particle) {
       let y = (height / 4) * Math.sin(particle.x / 100);
@@ -19,10 +19,10 @@ class Helix extends Component {
       ctx.fillStyle = particle.fill;
       ctx.arc(particle.x, y + (height / 2), particle.radius, 0, 2 * Math.PI, false);
       ctx.fill();
-      if (particle.x >= width + particle.radius) {
-        particle.x = -20;
+      if (particle.x >= rightBound + particle.radius) {
+        particle.x = -1.5 * spread;
       } else {
-        particle.x += 1;
+        particle.x += 0.5;
       }
     }
 
@@ -31,7 +31,7 @@ class Helix extends Component {
       move(particle);
     });
 
-    window.requestAnimationFrame(this.animateHelix.bind(this, ctx, particles));
+    window.requestAnimationFrame(this.animateHelix.bind(this, ctx, particles, rightBound, spread));
   }
 
   initHelix() {
@@ -45,8 +45,9 @@ class Helix extends Component {
 
     const radius = height / 10;
     const spread = radius * 3;
+    const rightBound = Math.ceil((width) / spread) * spread; // prevents gaps on wrap
     let particles = [];
-    for (let x = -radius; x <= width + radius; x += spread) {
+    for (let x = -spread; x <= rightBound; x += spread) {
       const fill = Style.primary;
       particles.push(createParticle(x, radius, { fill, zIndex: 0 }));
     }
@@ -54,7 +55,7 @@ class Helix extends Component {
     let zIndex = 1;
     let prevY = (height / -4) * Math.sin(-radius / 100);
     const fill = 'black';
-    for (let x = -radius; x <= this.props.width + radius; x += spread) {
+    for (let x = -spread; x <= rightBound + radius; x += spread) {
       const y = (height / -4) * Math.sin(x / 100);
       if (prevY <= 2 * radius && y > 2 * radius) {
         zIndex *= -1;
@@ -67,13 +68,13 @@ class Helix extends Component {
 
     const ctx = this.refs.canvas.getContext('2d');
     particles = particles.sort((p1, p2) => p2.zIndex > p1.zIndex);
-    this.animateHelix(ctx, particles);
+    this.animateHelix(ctx, particles, rightBound, spread);
   }
 
   render() {
     const { height, width } = this.props;
     return (
-      <canvas ref="canvas" width={width} height={height} />
+      <canvas ref="canvas" width={width} height={height} style={{ marginTop: '50px' }} />
     );
   }
 }
