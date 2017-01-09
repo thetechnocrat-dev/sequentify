@@ -12,7 +12,7 @@ const TopNavbar = function TopNavbar() {
           margin-bottom: 0;
         }
       `}</style>
-      <Navbar bsStyle="custom">
+      <Navbar bsStyle="custom" fixedTop>
         <Navbar.Header>
           <Navbar.Brand>
             {'Sequentify'}
