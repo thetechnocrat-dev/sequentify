@@ -1,11 +1,19 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
-import { DropdownButton, MenuItem, Alert, Row, Col, FormGroup, FormControl, Button } from 'react-bootstrap/lib';
+import { DropdownButton, MenuItem, ButtonGroup, Alert, Row, Col, FormGroup, FormControl,
+  Button, Glyphicon, OverlayTrigger, Popover } from 'react-bootstrap/lib';
 import Sequences from '../util/sequences';
 import Urls from '../util/urls';
+import AlignSettingsForm from './AlignSettingsForm';
 
-// custom components
+function AlignSettingsPopover(props) {
+  return (
+    <Popover id="align-settings" title="Align Settings">
+      <AlignSettingsForm {...props} />
+    </Popover>
+  );
+}
 
 class AlignInput extends Component {
   constructor(props) {
@@ -16,14 +24,24 @@ class AlignInput extends Component {
       titleB: 'Select an Example Sequence',
       errorsA: [],
       errorsB: [],
+      matchScore: '2',
+      mismatchPenalty: '6',
+      gapPenalty: '4',
+      gapOpeningPenalty: '16',
     };
+  }
+
+  handleFormChange(key, e) {
+    const newState = {};
+    newState[key] = e.target.value;
+    this.setState(newState);
   }
 
   clickAlign() {
     function validateInput(seq) {
       const errors = [];
       if (seq.length === 0) {
-        errors.push('Input sequence is required');
+        errors.push('Input sequence is required.');
       }
 
       if (!seq.match(/^[gctaGCTA\s]+$/)) {
@@ -33,6 +51,7 @@ class AlignInput extends Component {
       return errors;
     }
 
+    const { matchScore, mismatchPenalty, gapPenalty, gapOpeningPenalty } = this.state;
     const seqA = ReactDOM.findDOMNode(this.refs.formA).value;
     const seqB = ReactDOM.findDOMNode(this.refs.formB).value;
     const errorsA = validateInput(seqA);
@@ -42,6 +61,10 @@ class AlignInput extends Component {
       axios.post(`${Urls.api}/align`, {
         SeqA: seqA.toLowerCase().replace(/\s/g, ''),
         SeqB: seqB.toLowerCase().replace(/\s/g, ''),
+        MatchScore: matchScore,
+        MismatchPenalty: mismatchPenalty,
+        GapPenalty: gapPenalty,
+        GapOpeningPenalty: gapOpeningPenalty,
       })
         .then((response) => {
           this.setState({ isLoading: false });
@@ -137,14 +160,37 @@ class AlignInput extends Component {
         </Col>
 
         <Col xs={12} style={{ textAlign: 'center' }}>
-          <Button
-            onClick={this.clickAlign.bind(this)}
-            bsStyle="accent"
-            style={{ margin: '-5px 0px 10px 0px' }}
-            disabled={this.state.isLoading}
-          >
-            {this.state.isLoading ? 'Aligning...' : 'Align'}
-          </Button>
+          <ButtonGroup>
+            <Button
+              onClick={this.clickAlign.bind(this)}
+              bsStyle="accent"
+              style={{ margin: '-5px 0px 10px 0px' }}
+              disabled={this.state.isLoading}
+            >
+              {this.state.isLoading ? 'Aligning...' : 'Align'}
+            </Button>
+            <OverlayTrigger
+              trigger="click"
+              rootClose
+              placement="right"
+              overlay={AlignSettingsPopover(
+                {
+                  handleFormChange: this.handleFormChange.bind(this),
+                  matchScore: this.state.matchScore,
+                  mismatchPenalty: this.state.mismatchPenalty,
+                  gapPenalty: this.state.gapPenalty,
+                  gapOpeningPenalty: this.state.gapOpeningPenalty,
+                },
+              )}
+            >
+              <Button
+                bsStyle="accent-off"
+                style={{ margin: '-5px 0px 10px 0px' }}
+              >
+                <Glyphicon glyph="cog" />
+              </Button>
+            </OverlayTrigger>
+          </ButtonGroup>
         </Col>
       </Row>
     );

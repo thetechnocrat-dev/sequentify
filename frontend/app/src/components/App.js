@@ -76,13 +76,19 @@ class App extends Component {
             color: white;
           }
         `}</style>
+        <Helix width={this.state.windowWidth} height={helixHeight} />
         <style type="text/css">{`
           .btn-accent {
             background-color: ${Style.accent};
             color: white;
           }
         `}</style>
-        <Helix width={this.state.windowWidth} height={helixHeight} />
+        <style type="text/css">{`
+          .btn-accent-off {
+            background-color: ${Style.accentOff};
+            color: white;
+          }
+        `}</style>
         <Panel style={panelStyle} bsStyle="primary">
           <Grid style={gridStyle}>
             <AlignInput updateOutput={this.updateOutput.bind(this)} height={sectionHeight} />

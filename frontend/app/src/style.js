@@ -7,6 +7,7 @@ const Style = {
   primary: '#3F51B5',
   light_primary: '#C5CAE9',
   accent: '#00BCD4',
+  accentOff: '#39909b',
   background: '#edeef8',
 };
 
