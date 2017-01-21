@@ -25,18 +25,24 @@ func corsHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func alignHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	type SeqPair struct {
-		SeqA string
-		SeqB string
+	type AlignData struct {
+		SeqA              string
+		SeqB              string
+		MatchScore        float64
+		MismatchPenalty   float64
+		GapPenalty        float64
+		GapOpeningPenalty float64
 	}
+
 	decoder := json.NewDecoder(r.Body)
-	var seqs SeqPair
-	err := decoder.Decode(&seqs)
+	var alignData AlignData
+	err := decoder.Decode(&alignData)
 	if err != nil {
 		panic(err)
 	}
 
-	alignment := aligner.Align(seqs.SeqA, seqs.SeqB)
+	alignment := aligner.Align(alignData.SeqA, alignData.SeqB, alignData.MatchScore,
+		alignData.MismatchPenalty, alignData.GapPenalty, alignData.GapOpeningPenalty)
 	res, err := json.Marshal(alignment)
 	if err != nil {
 		panic(err)

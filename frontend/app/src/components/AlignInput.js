@@ -25,9 +25,9 @@ class AlignInput extends Component {
       errorsA: [],
       errorsB: [],
       matchScore: '2',
-      mismatchPenalty: '6',
-      gapPenalty: '4',
-      gapOpeningPenalty: '16',
+      mismatchPenalty: '-6',
+      gapPenalty: '-4',
+      gapOpeningPenalty: '-16',
     };
   }
 
@@ -61,10 +61,10 @@ class AlignInput extends Component {
       axios.post(`${Urls.api}/align`, {
         SeqA: seqA.toLowerCase().replace(/\s/g, ''),
         SeqB: seqB.toLowerCase().replace(/\s/g, ''),
-        MatchScore: matchScore,
-        MismatchPenalty: mismatchPenalty,
-        GapPenalty: gapPenalty,
-        GapOpeningPenalty: gapOpeningPenalty,
+        MatchScore: parseFloat(matchScore),
+        MismatchPenalty: parseFloat(mismatchPenalty),
+        GapPenalty: parseFloat(gapPenalty),
+        GapOpeningPenalty: parseFloat(gapOpeningPenalty),
       })
         .then((response) => {
           this.setState({ isLoading: false });
@@ -116,9 +116,13 @@ class AlignInput extends Component {
   }
 
   makeSeqDropwdown(ref, titleKey) {
+    let title = this.state[titleKey];
+    const cutoff = 40;
+    const end = title.length > cutoff ? cutoff : title.length;
+    if (end === cutoff) { title = `${title.slice(0, end)}...`; }
     return (
       <DropdownButton
-        title={this.state[titleKey]}
+        title={title}
         bsStyle={'primary'}
         style={{ marginBottom: '10px' }}
         id="select a sequence"
