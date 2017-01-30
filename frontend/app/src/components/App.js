@@ -89,6 +89,11 @@ class App extends Component {
             color: white;
           }
         `}</style>
+        <style type="text/css">{`
+          .panel-primary {
+            border-color: {Style.primary};
+          }
+        `}</style>
         <Panel style={panelStyle} bsStyle="primary">
           <Grid style={gridStyle}>
             <AlignInput updateOutput={this.updateOutput.bind(this)} height={sectionHeight} />
