@@ -1,4 +1,4 @@
-var Urls = {};
+let Urls = {};
 
 if (process.env.NODE_ENV === 'production') {
   Urls = {

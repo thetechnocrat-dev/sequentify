@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/McMenemy/aligner"
+	"github.com/McMenemy/sequentify/aligner"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 	"os"
@@ -57,7 +57,7 @@ func alignHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	fmt.Fprintf(w, "This is sequentify's resftful API")
+	fmt.Fprintf(w, "This a is sequentify's resftful API")
 }
 
 func main() {
