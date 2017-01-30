@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/McMenemy/sequentify/aligner"
+	"github.com/McMenemy/sequentify/api/aligner"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
 	"os"
