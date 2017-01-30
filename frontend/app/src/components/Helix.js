@@ -3,15 +3,21 @@ import Style from '../style';
 
 class Helix extends Component {
   componentDidMount() {
-    this.initHelix();
+    this.initHelix(this.props);
+  }
+
+  componentWillReceiveProps(newProps) {
+    window.cancelAnimationFrame(this.animationReq);
+    this.initHelix(newProps);
   }
 
   componentDidUpdate() {
-    this.initHelix();
+    this.animationReq();
   }
 
-  animateHelix(ctx, particles, rightBound, spread) {
+  animateHelix(particles, rightBound, spread) {
     const { height, width } = this.props;
+    const { ctx } = this.state;
     function move(particle) {
       let y = (height / 4) * Math.sin(particle.x / 100);
       if (particle.mirror) { y *= -1; }
@@ -31,11 +37,11 @@ class Helix extends Component {
       move(particle);
     });
 
-    window.requestAnimationFrame(this.animateHelix.bind(this, ctx, particles, rightBound, spread));
+    this.animationReq = window.requestAnimationFrame(this.animateHelix.bind(this, particles, rightBound, spread));
   }
 
-  initHelix() {
-    const { width, height } = this.props;
+  initHelix(props) {
+    const { width, height } = props;
     function createParticle(x, radius, options = {}) {
       if (!options.fill) { options.fill = Style.primary; }
 
@@ -64,11 +70,10 @@ class Helix extends Component {
       particles.push(createParticle(x, radius, { mirror: true, fill, zIndex }));
     }
 
-    particles = particles.sort((p1, p2) => p1.zIndex < p2.zIndex);
-
-    const ctx = this.refs.canvas.getContext('2d');
     particles = particles.sort((p1, p2) => p2.zIndex > p1.zIndex);
-    this.animateHelix(ctx, particles, rightBound, spread);
+    this.animationReq = this.animateHelix.bind(this, particles, rightBound, spread); // used to remove later
+    const ctx = this.refs.canvas.getContext('2d');
+    this.setState({ ctx });
   }
 
   render() {
