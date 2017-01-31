@@ -70,6 +70,7 @@ class Helix extends Component {
       particles.push(createParticle(x, radius, { mirror: true, fill, zIndex }));
     }
 
+    particles = particles.sort((p1, p2) => p1.zIndex < p2.zIndex);
     particles = particles.sort((p1, p2) => p2.zIndex > p1.zIndex);
     this.animationReq = this.animateHelix.bind(this, particles, rightBound, spread); // used to remove later
     const ctx = this.refs.canvas.getContext('2d');

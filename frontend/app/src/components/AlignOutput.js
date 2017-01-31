@@ -6,11 +6,24 @@ import SeqPair from './SeqPair';
 
 class AlignOutput extends Component {
   makeSeqPairs() {
-    if (this.props.output[0] === '') {
+    const { output } = this.props;
+
+    if (output[0] === '') {
       return <p style={{ color: '#8e8e8e' }}>Alignment output will appear hear</p>;
     }
 
-    return this.props.output.map((seqPair, i) => <SeqPair seqPair={seqPair} key={i} />);
+    const labelStyle = {
+      whiteSpace: 'pre-wrap',
+      display: 'inline-block',
+      width: '100px',
+      textAlign: 'left',
+      paddingTop: '10px',
+      paddingBottom: '10px',
+    };
+    const labelText = 'Sequence1:\n\nSequence2:';
+    const label = [<div style={labelStyle} key={-1}>{labelText}</div>];
+
+    return label.concat(output.map((seqPair, i) => <SeqPair seqPair={seqPair} ind={i} key={i} />));
   }
 
   render() {
