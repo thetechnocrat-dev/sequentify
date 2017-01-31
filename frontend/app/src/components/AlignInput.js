@@ -138,7 +138,7 @@ class AlignInput extends Component {
         <Col xs={12} sm={6}>
           {this.makeErrorAlert('errorsA')}
           {this.makeSeqDropwdown('formA', 'titleA')}
-          <FormGroup controlId="formControlsTextarea" style={{ marginBottom: '5px' }}>
+          <FormGroup controlId="formControlsTextarea">
             <FormControl
               ref="formA"
               componentClass="textarea"
@@ -147,13 +147,12 @@ class AlignInput extends Component {
               onChange={this.handleSequenceChange.bind(this, 'seqA')}
             />
           </FormGroup>
-          <div style={{ textAlign: 'center', width: '100%' }}>Sequence 1</div>
         </Col>
 
         <Col xs={12} sm={6}>
           {this.makeErrorAlert('errorsA')}
           {this.makeSeqDropwdown('formB', 'titleB')}
-          <FormGroup controlId="formControlsTextarea" style={{ marginBottom: '5px' }}>
+          <FormGroup controlId="formControlsTextarea">
             <FormControl
               ref="formB"
               componentClass="textarea"
@@ -162,7 +161,6 @@ class AlignInput extends Component {
               onChange={this.handleSequenceChange.bind(this, 'seqB')}
             />
           </FormGroup>
-          <div style={{ textAlign: 'center', width: '100%' }}>Sequence 2</div>
         </Col>
 
         <Col xs={12} style={{ textAlign: 'center' }}>
