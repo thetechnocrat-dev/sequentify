@@ -6,6 +6,7 @@ class NavItem extends Component {
 
     const style = {
       marginTop: '15px',
+      marginLeft: '10px',
       cursor: 'pointer',
     };
 
