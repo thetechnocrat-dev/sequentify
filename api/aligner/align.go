@@ -8,13 +8,21 @@ func Tester(str string) string {
 	return str
 }
 
-func Align(seq1, seq2 string, matchScore, mismatchPenalty, gapPenalty,
-	gapOpeningPenalty float64) []string {
+// store dp table values
+type node struct {
+	Score float64
+	Path  string
+}
 
-	type node struct {
-		Score float64
-		Path  string
-	}
+// store dp tables
+type dpTables struct {
+	mTable [][]node
+	xTable [][]node
+	yTable [][]node
+}
+
+func makeSeqScoreTables(seq1, seq2 string, matchScore, mismatchPenalty, gapPenalty,
+	gapOpeningPenalty float64) dpTables {
 
 	rowCount := len(seq1) + 1
 	colCount := len(seq2) + 1
@@ -89,7 +97,13 @@ func Align(seq1, seq2 string, matchScore, mismatchPenalty, gapPenalty,
 		}
 	}
 
-	// use dp table to backtrace sequence pairings
+	return dpTables{mTable, xTable, yTable}
+}
+
+func backtrace(seq1, seq2 string, dpTables dpTables) []string {
+	mTable := dpTables.mTable
+	xTable := dpTables.xTable
+	yTable := dpTables.yTable
 	var result []string
 	i := len(seq1)
 	j := len(seq2)
@@ -153,4 +167,33 @@ func Align(seq1, seq2 string, matchScore, mismatchPenalty, gapPenalty,
 	}
 
 	return result
+}
+
+func Align(seq1, seq2 string, matchScore, mismatchPenalty, gapPenalty,
+	gapOpeningPenalty float64) []string {
+
+	scoreTables := makeSeqScoreTables(seq1, seq2, matchScore, mismatchPenalty, gapPenalty, gapOpeningPenalty)
+	return backtrace(seq1, seq2, scoreTables)
+}
+
+func AlignScore(seq1, seq2 string, matchScore, mismatchPenalty, gapPenalty,
+	gapOpeningPenalty float64) float64 {
+
+	scoreTables := makeSeqScoreTables(seq1, seq2, matchScore, mismatchPenalty, gapPenalty, gapOpeningPenalty)
+
+	mTable := scoreTables.mTable
+	xTable := scoreTables.xTable
+	yTable := scoreTables.yTable
+	i := len(seq1)
+	j := len(seq2)
+	var bestScore float64
+	if xTable[i][j].Score >= mTable[i][j].Score && xTable[i][j].Score >= yTable[i][j].Score {
+		bestScore = xTable[i][j].Score
+	} else if yTable[i][j].Score >= mTable[i][j].Score {
+		bestScore = yTable[i][j].Score
+	} else {
+		bestScore = mTable[i][j].Score
+	}
+
+	return bestScore
 }

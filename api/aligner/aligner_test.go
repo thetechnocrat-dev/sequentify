@@ -14,6 +14,16 @@ func TestTester(t *testing.T) {
 	}
 }
 
+func TestCanary(t *testing.T) {
+	actual := Canary("abc")
+	expected := "abc"
+
+	if actual != expected {
+		t.Error("Tester function failed expected output")
+		t.Logf("expected %s but got %s", expected, actual)
+	}
+}
+
 // Utility functions and structs
 type AlignTest struct {
 	seq1, seq2, message string
@@ -32,6 +42,20 @@ func compareArrays(arr1, arr2 []string) bool {
 		}
 	}
 
+	return true
+}
+
+func compareResultArrays(results1, results2 []result) bool {
+	if len(results1) != len(results2) {
+		return false
+	}
+
+	for i, result1 := range results1 {
+		result2 := results2[i]
+		if result1.name != result2.name || result1.score != result2.score {
+			return false
+		}
+	}
 	return true
 }
 
@@ -69,5 +93,28 @@ func TestAlign(t *testing.T) {
 			t.Error(test.message)
 			t.Logf("expected %v, actual %v", test.expected, actual)
 		}
+	}
+}
+
+func TestAlignSearch(t *testing.T) {
+	targetSeq := "actg"
+	sequences := make([][]string, 3)
+	sequences[0] = []string{"s1", "actg"}
+	sequences[1] = []string{"s2", "cctg"}
+	sequences[2] = []string{"s3", "aaag"}
+	const matchScore = float64(4)
+	const mismatchPenalty = float64(-6)
+	const gapPenalty = float64(-4)
+	const gapOpeningPenalty = float64(-8)
+
+	actual := AlignSearch(targetSeq, sequences, matchScore, mismatchPenalty, gapPenalty, gapOpeningPenalty)
+	expected := make([]result, 3)
+	expected[0] = result{"s1", 16.0}
+	expected[1] = result{"s2", 6.0}
+	expected[2] = result{"s3", -4.0}
+
+	if !compareResultArrays(actual, actual) {
+		t.Error("AlignSearch does not work")
+		t.Logf("expected %v, actual %v", expected, actual)
 	}
 }

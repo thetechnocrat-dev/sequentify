@@ -25,6 +25,12 @@ func corsHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func alignHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	frontendUrl := getFrontendUrl()
+	w.Header().Set("Access-Control-Allow-Origin", frontendUrl)
+	w.Header().Set("Access-Control-Allow-Methods", "POST")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Content-Type", "application/json")
+
 	type AlignData struct {
 		SeqA              string
 		SeqB              string
@@ -48,11 +54,40 @@ func alignHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		panic(err)
 	}
 
+	w.Write(res)
+}
+
+func alignSearchHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	frontendUrl := getFrontendUrl()
 	w.Header().Set("Access-Control-Allow-Origin", frontendUrl)
 	w.Header().Set("Access-Control-Allow-Methods", "POST")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Content-Type", "application/json")
+
+	type AlignSearchData struct {
+		TargetSeq         string
+		Sequences         []string
+		MatchScore        float64
+		MismatchPenalty   float64
+		GapPenalty        float64
+		GapOpeningPenalty float64
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	var alignSearchData AlignSearchData
+	err := decoder.Decode(&alignData)
+	if err != nil {
+		panic(err)
+	}
+
+	alignments := aligner.AlignSearch(alignSearchData.TargetSeq, alignSearchData.Sequences,
+		alignSearchData.MatchScore, alignSearchData.MismatchPenalty, alignSearchData.GapPenalty,
+		alignSearchData.GapOpeningPenalty)
+	res, err := json.Marshal(alignments)
+	if err != nil {
+		panic(err)
+	}
+
 	w.Write(res)
 }
 
