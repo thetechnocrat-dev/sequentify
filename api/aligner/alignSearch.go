@@ -16,9 +16,9 @@ type result struct {
 func AlignSearch(targetSeq string, sequences [][]string, matchScore, mismatchPenalty, gapPenalty,
 	gapOpeningPenalty float64) []result {
 
-	results := make([]result, len(sequences))
 	var wg sync.WaitGroup
 	wg.Add(len(sequences))
+	results := make([]result, len(sequences))
 
 	for i := 0; i < len(sequences); i++ {
 		go func(i int) {
@@ -32,5 +32,6 @@ func AlignSearch(targetSeq string, sequences [][]string, matchScore, mismatchPen
 	}
 
 	wg.Wait()
+
 	return results
 }
