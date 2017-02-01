@@ -4,10 +4,6 @@ import (
 	"sync"
 )
 
-func Canary(str string) string {
-	return str
-}
-
 type result struct {
 	name  string
 	score float64

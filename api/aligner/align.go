@@ -4,10 +4,6 @@ import (
 	"math"
 )
 
-func Tester(str string) string {
-	return str
-}
-
 // store dp table values
 type node struct {
 	Score float64

@@ -4,26 +4,6 @@ import (
 	"testing"
 )
 
-func TestTester(t *testing.T) {
-	actual := Tester("abc")
-	expected := "abc"
-
-	if actual != expected {
-		t.Error("Tester function failed expected output")
-		t.Logf("expected %s but got %s", expected, actual)
-	}
-}
-
-func TestCanary(t *testing.T) {
-	actual := Canary("abc")
-	expected := "abc"
-
-	if actual != expected {
-		t.Error("Tester function failed expected output")
-		t.Logf("expected %s but got %s", expected, actual)
-	}
-}
-
 // Utility functions and structs
 type AlignTest struct {
 	seq1, seq2, message string

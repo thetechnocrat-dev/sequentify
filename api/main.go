@@ -1,4 +1,4 @@
-package main
+package aligner
 
 import (
 	"encoding/json"
@@ -75,7 +75,7 @@ func alignSearchHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 
 	decoder := json.NewDecoder(r.Body)
 	var alignSearchData AlignSearchData
-	err := decoder.Decode(&alignData)
+	err := decoder.Decode(&alignSearchData)
 	if err != nil {
 		panic(err)
 	}
