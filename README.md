@@ -3,7 +3,7 @@
 
 A web app to align DNA sequences ([Sequentify.com](http://sequentify.com/)).
 
-To run locally install docker-compose and then run the following command from the project folder:
+To run locally, install docker-compose and then run the following command from the project folder:
 
 $ docker-compose up -d
 
