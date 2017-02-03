@@ -2,6 +2,7 @@ language: go
 go:
   - master
 install:
+  - go get ./api
   - go build ./api
 script:
   - cd ./api/aligner
