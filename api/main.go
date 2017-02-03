@@ -66,7 +66,7 @@ func alignSearchHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 
 	type AlignSearchData struct {
 		TargetSeq         string
-		Sequences         []string
+		Sequences         [][]string
 		MatchScore        float64
 		MismatchPenalty   float64
 		GapPenalty        float64
