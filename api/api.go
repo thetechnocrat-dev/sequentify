@@ -1,4 +1,4 @@
-package aligner
+package main
 
 import (
 	"encoding/json"
