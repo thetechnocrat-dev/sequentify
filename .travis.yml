@@ -4,5 +4,5 @@ go:
 install:
   - go get ./api
 script:
-  - cd ./api/aligner
+  - cd ./api/services/aligner
   - go test
