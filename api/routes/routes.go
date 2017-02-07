@@ -19,18 +19,19 @@ func getFrontendUrl() string {
 	}
 }
 
-func CorsHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func setCors(w http.ResponseWriter) {
 	frontendUrl := getFrontendUrl()
 	w.Header().Set("Access-Control-Allow-Origin", frontendUrl)
 	w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS, POST")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 }
 
+func CorsHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	setCors(w)
+}
+
 func AlignHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	frontendUrl := getFrontendUrl()
-	w.Header().Set("Access-Control-Allow-Origin", frontendUrl)
-	w.Header().Set("Access-Control-Allow-Methods", "POST")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	setCors(w)
 	w.Header().Set("Content-Type", "application/json")
 
 	type AlignData struct {
@@ -46,24 +47,23 @@ func AlignHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	var alignData AlignData
 	err := decoder.Decode(&alignData)
 	if err != nil {
-		panic(err)
+		http.Error(w, err.Error(), 400)
+		return
 	}
 
 	alignment := aligner.Align(alignData.SeqA, alignData.SeqB, alignData.MatchScore,
 		alignData.MismatchPenalty, alignData.GapPenalty, alignData.GapOpeningPenalty)
 	res, err := json.Marshal(alignment)
 	if err != nil {
-		panic(err)
+		http.Error(w, err.Error(), 500)
+		return
 	}
 
 	w.Write(res)
 }
 
 func AlignSearchHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	frontendUrl := getFrontendUrl()
-	w.Header().Set("Access-Control-Allow-Origin", frontendUrl)
-	w.Header().Set("Access-Control-Allow-Methods", "POST")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	setCors(w)
 	w.Header().Set("Content-Type", "application/json")
 
 	type AlignSearchData struct {
@@ -79,7 +79,8 @@ func AlignSearchHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 	var alignSearchData AlignSearchData
 	err := decoder.Decode(&alignSearchData)
 	if err != nil {
-		panic(err)
+		http.Error(w, err.Error(), 400)
+		return
 	}
 
 	alignments := aligner.AlignSearch(alignSearchData.TargetSeq, alignSearchData.Sequences,
@@ -87,29 +88,14 @@ func AlignSearchHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 		alignSearchData.GapOpeningPenalty)
 	res, err := json.Marshal(alignments)
 	if err != nil {
-		panic(err)
+		http.Error(w, err.Error(), 500)
+		return
 	}
 
 	w.Write(res)
 }
 
 func IndexHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	log.Println("index handle")
-	err := database.DB.Ping()
-	log.Println("index handle")
-	if err != nil {
-		log.Println("no DB connection")
-		log.Println(err)
-	}
-	_, err = database.DB.Exec(
-		`create table if not exists appusers (
-			id serial primary key,
-			username text not null,
-			password text not null
-		)`)
-	if err != nil {
-		log.Fatal(err)
-	}
 	query :=
 		`INSERT INTO
 			appusers ("username","password")
@@ -117,9 +103,6 @@ func IndexHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 			($1, $2)
 		RETURNING
 			id`
-	if err != nil {
-		log.Fatal(err)
-	}
 	var studentID int
 	stmt, err := database.DB.Prepare(query)
 	err = stmt.QueryRow("Lee", "testing").Scan(&studentID)

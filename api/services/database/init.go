@@ -9,9 +9,38 @@ import (
 var DB *sql.DB
 var err error
 
+func addDatabase(dbname string) error {
+	// create database with dbname, won't do anything if db already exists
+	DB.Exec("CREATE DATABASE " + dbname)
+
+	// connect to newly created DB (now has dbname param)
+	connectionParams := "dbname=" + dbname + " user=docker password=docker sslmode=disable host=db"
+	DB, err = sql.Open("postgres", connectionParams)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func addUserTable() error {
+	_, err = DB.Exec(
+		`create table if not exists appusers (
+			id serial primary key,
+			username text not null,
+			password text not null
+		)`)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func Init() (*sql.DB, error) {
 	// set up DB connection and then attempt to connect 5 times over 25 seconds
-	DB, err = sql.Open("postgres", "user=docker password=docker dbname=sample sslmode=disable host=db")
+	connectionParams := "user=docker password=docker sslmode=disable host=db"
+	DB, err = sql.Open("postgres", connectionParams)
 	if err != nil {
 		return DB, err
 	}
@@ -24,6 +53,16 @@ func Init() (*sql.DB, error) {
 		time.Sleep(5 * time.Second)
 	}
 
+	if err != nil {
+		return DB, err
+	}
+
+	err = addDatabase("sequentify")
+	if err != nil {
+		return DB, err
+	}
+
+	err = addUserTable()
 	if err != nil {
 		return DB, err
 	}
