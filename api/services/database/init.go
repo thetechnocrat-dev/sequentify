@@ -23,12 +23,22 @@ func addDatabase(dbname string) error {
 	return nil
 }
 
-func addUserTable() error {
+func addTables() error {
 	_, err = DB.Exec(
-		`create table if not exists appusers (
-			id serial primary key,
-			username text not null,
-			password text not null
+		`create table if not exists sequences (
+			id int primary key,
+			seqStoreId int foreign key,
+			name char(50) not null,
+			sequence text not null
+		)`)
+	if err != nil {
+		return err
+	}
+
+	_, err = DB.Exec(
+		`create table if not exists seqStores (
+			id int primary key,
+			name char(50) not null
 		)`)
 	if err != nil {
 		return err
@@ -37,6 +47,36 @@ func addUserTable() error {
 	return nil
 }
 
+func addSeqStore(name string) error {
+	_, err = DB.Exec(
+		`INSET INTO
+			seqStores ("name")
+		VALUES
+			($1)`,
+		name
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func addSequence(seqStoreId int, name, sequence string) error {
+	_, err = DB.Exec(
+		`INSERT INTO
+			sequences ("seqStoreId","name","sequence")
+		VALUES
+			($1, $2, $3)`,
+		seqStoreId, name, sequence
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+		
 func Init() (*sql.DB, error) {
 	// set up DB connection and then attempt to connect 5 times over 25 seconds
 	connectionParams := "user=docker password=docker sslmode=disable host=db"
@@ -62,10 +102,12 @@ func Init() (*sql.DB, error) {
 		return DB, err
 	}
 
-	err = addUserTable()
+	err = addSeqStore("testing")
 	if err != nil {
 		return DB, err
 	}
+
+	err = addSequence(
 
 	return DB, err
 }

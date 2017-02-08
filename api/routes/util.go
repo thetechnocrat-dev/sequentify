@@ -7,12 +7,12 @@ import (
 	"os"
 )
 
-func sendErrorResponse(w http.ResponseWriter, errorString string, errorCode int) error {
-	type ErrorResponse struct {
-		Success bool   `json:"success"`
-		Error   string `json:"error"`
-	}
+type ErrorResponse struct {
+	Success bool   `json:"success"`
+	Error   string `json:"error"`
+}
 
+func sendErrorResponse(w http.ResponseWriter, errorString string, errorCode int) error {
 	res, err := json.Marshal(ErrorResponse{Success: false, Error: errorString})
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(errorCode)

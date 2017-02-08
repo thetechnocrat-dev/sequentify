@@ -1,5 +1,3 @@
-package routes
-
 import (
 	"encoding/json"
 	"fmt"
@@ -10,6 +8,24 @@ import (
 	"net/http"
 )
 
+type AlignSearchData struct {
+	TargetSeq         string
+	Sequences         [][]string
+	MatchScore        float64
+	MismatchPenalty   float64
+	GapPenalty        float64
+	GapOpeningPenalty float64
+}
+
+type AlignData struct {
+	SeqA              string
+	SeqB              string
+	MatchScore        float64
+	MismatchPenalty   float64
+	GapPenalty        float64
+	GapOpeningPenalty float64
+}
+
 func CorsHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	setCors(w)
 }
@@ -17,15 +33,6 @@ func CorsHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 func AlignHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	setCors(w)
 	w.Header().Set("Content-Type", "application/json")
-
-	type AlignData struct {
-		SeqA              string
-		SeqB              string
-		MatchScore        float64
-		MismatchPenalty   float64
-		GapPenalty        float64
-		GapOpeningPenalty float64
-	}
 
 	decoder := json.NewDecoder(r.Body)
 	var alignData AlignData
@@ -49,15 +56,6 @@ func AlignHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 func AlignSearchHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	setCors(w)
 	w.Header().Set("Content-Type", "application/json")
-
-	type AlignSearchData struct {
-		TargetSeq         string
-		Sequences         [][]string
-		MatchScore        float64
-		MismatchPenalty   float64
-		GapPenalty        float64
-		GapOpeningPenalty float64
-	}
 
 	decoder := json.NewDecoder(r.Body)
 	var alignSearchData AlignSearchData
