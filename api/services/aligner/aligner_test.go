@@ -25,14 +25,14 @@ func compareArrays(arr1, arr2 []string) bool {
 	return true
 }
 
-func compareResultArrays(results1, results2 []result) bool {
+func compareResultArrays(results1, results2 []Result) bool {
 	if len(results1) != len(results2) {
 		return false
 	}
 
 	for i, result1 := range results1 {
 		result2 := results2[i]
-		if result1.name != result2.name || result1.score != result2.score {
+		if result1.Name != result2.Name || result1.Score != result2.Score {
 			return false
 		}
 	}
@@ -88,10 +88,10 @@ func TestAlignSearch(t *testing.T) {
 	const gapOpeningPenalty = float64(-8)
 
 	actual := AlignSearch(targetSeq, sequences, matchScore, mismatchPenalty, gapPenalty, gapOpeningPenalty)
-	expected := make([]result, 3)
-	expected[0] = result{"s1", 16.0}
-	expected[1] = result{"s2", 6.0}
-	expected[2] = result{"s3", -4.0}
+	expected := make([]Result, 3)
+	expected[0] = Result{"s1", 16.0}
+	expected[1] = Result{"s2", 6.0}
+	expected[2] = Result{"s3", -4.0}
 
 	if !compareResultArrays(actual, actual) {
 		t.Error("AlignSearch does not work")
