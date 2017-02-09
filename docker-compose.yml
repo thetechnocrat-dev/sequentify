@@ -1,16 +1,5 @@
 version: '2'
 services:
-  db:
-    build: ./db
-    volumes:
-      - ./db/pgdata:/pgdata
-    ports:
-      - "5432"
-    environment:
-      - POSTGRES_USER=docker
-      - POSTGRES_PASSWORD=docker
-      - PGDATA=/pgdata
-
   api:
     build:
       context: ./api
@@ -20,8 +9,6 @@ services:
       - ./api:/go/src/github.com/McMenemy/sequentify/api
     ports:
       - "3000:8080"
-    links:
-      - db
 
   frontend:
     build:

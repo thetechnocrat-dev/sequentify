@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/McMenemy/sequentify/api/services/aligner"
 	"github.com/julienschmidt/httprouter"
-	"log"
 	"net/http"
 )
 
@@ -58,7 +57,6 @@ func AlignSearchHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 	setCors(w)
 	w.Header().Set("Content-Type", "application/json")
 
-	log.Println("started search align")
 	decoder := json.NewDecoder(r.Body)
 	var alignSearchData AlignSearchData
 	err := decoder.Decode(&alignSearchData)
