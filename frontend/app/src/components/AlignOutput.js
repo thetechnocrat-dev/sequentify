@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { Row, Col, Well } from 'react-bootstrap/lib';
-
-// Custom components
 import SeqPair from './SeqPair';
 
 class AlignOutput extends Component {

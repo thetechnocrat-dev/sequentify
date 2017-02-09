@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
-import { DropdownButton, MenuItem, ButtonGroup, Alert, Row, Col, FormGroup, FormControl,
-  Button, Glyphicon, OverlayTrigger, Popover } from 'react-bootstrap/lib';
+import { Popover, DropdownButton, Alert, MenuItem, Row, Col, Button, FormGroup, FormControl,
+  ButtonGroup, OverlayTrigger, Glyphicon } from 'react-bootstrap/lib';
 import Sequences from '../util/sequences';
 import Urls from '../util/urls';
 import AlignSettingsForm from './AlignSettingsForm';
@@ -15,15 +15,15 @@ function AlignSettingsPopover(props) {
   );
 }
 
-class AlignInput extends Component {
+class AlignSearchInput extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isLoading: false,
-      titleA: 'Select Sequence 1',
-      titleB: 'Select Sequence 2',
-      errorsA: [],
-      errorsB: [],
+      targetTitle: 'Select a Sequence',
+      dbTitle: 'Select a Database',
+      targetErrors: [],
+      dbErros: [],
       matchScore: '2',
       mismatchPenalty: '-6',
       gapPenalty: '-4',
@@ -37,8 +37,8 @@ class AlignInput extends Component {
     this.setState(newState);
   }
 
-  clickAlign() {
-    function validateInput(seq) {
+  clickAlignSearch() {
+    function validateTargetInput(seq) {
       const errors = [];
       if (seq.length === 0) {
         errors.push('Input sequence is required.');
@@ -51,16 +51,19 @@ class AlignInput extends Component {
       return errors;
     }
 
-    const { matchScore, mismatchPenalty, gapPenalty, gapOpeningPenalty } = this.state;
-    const seqA = ReactDOM.findDOMNode(this.refs.formA).value;
-    const seqB = ReactDOM.findDOMNode(this.refs.formB).value;
-    const errorsA = validateInput(seqA);
-    const errorsB = validateInput(seqB);
-    if (errorsA.length === 0 && errorsB.length === 0) {
-      this.setState({ errorsA: [], errorsB: [], isLoading: true });
-      axios.post(`${Urls.api}/align`, {
-        SeqA: seqA.toLowerCase().replace(/\s/g, ''),
-        SeqB: seqB.toLowerCase().replace(/\s/g, ''),
+    const { targetTitle, matchScore, mismatchPenalty, gapPenalty, gapOpeningPenalty } = this.state;
+    const targetSeq = ReactDOM.findDOMNode(this.refs.targetForm).value;
+    const targetErrors = validateTargetInput(targetSeq);
+    const dbErrors = [];
+    if (targetTitle === 'Select a Database') {
+      dbErrors.push('Database Selection is Required');
+    }
+
+    if (targetErrors.length === 0 && dbErrors.length === 0) {
+      this.setState({ targetErrors: [], dbErrors, isLoading: true });
+      axios.post(`${Urls.api}/alignSearch`, {
+        TargetSeq: targetSeq,
+        Sequences: Sequences['H2A genes'],
         MatchScore: parseFloat(matchScore),
         MismatchPenalty: parseFloat(mismatchPenalty),
         GapPenalty: parseFloat(gapPenalty),
@@ -68,7 +71,8 @@ class AlignInput extends Component {
       })
         .then((response) => {
           this.setState({ isLoading: false });
-          this.props.updateOutput(response.data);
+          const scores = response.data.sort((result1, result2) => result1.Score <= result2.Score);
+          this.props.updateOutput(scores);
         },
       )
         .catch(() => {
@@ -76,14 +80,12 @@ class AlignInput extends Component {
         },
       );
     } else {
-      this.setState({ errorsA, errorsB });
+      this.setState({ targetErrors, dbErrors });
     }
   }
 
-  handleSequenceChange(seqKey, e) {
-    const newState = {};
-    newState[seqKey] = e.target.value;
-    this.setState(newState);
+  handleSequenceChange(e) {
+    this.setState({ targetSeq: e.target.value });
   }
 
   makeErrorAlert(errorKey) {
@@ -97,38 +99,62 @@ class AlignInput extends Component {
     return <div />;
   }
 
-  clickSeqItem(ref, sequence, name, titleKey) {
-    const newState = {};
+  clickSeqItem(ref, sequence, name) {
     ReactDOM.findDOMNode(this.refs[ref]).value = sequence;
-    newState[titleKey] = name;
-    this.setState(newState);
+    this.setState({ targetTitle: name });
   }
 
-  makeSeqMenuItems(ref, titleKey) {
+  makeSeqMenuItems(ref) {
     return Sequences['H2A genes'].map((seq, i) =>
       // seq[0] == seqName, seq[1] == sequence
       <MenuItem
         key={i}
-        onClick={this.clickSeqItem.bind(this, ref, seq[1], seq[0], titleKey)}
+        onClick={this.clickSeqItem.bind(this, ref, seq[1], seq[0])}
       >
         {seq[0]}
       </MenuItem>,
     );
   }
 
-  makeSeqDropwdown(ref, titleKey) {
-    let title = this.state[titleKey];
-    const cutoff = 40;
-    const end = title.length > cutoff ? cutoff : title.length;
-    if (end === cutoff) { title = `${title.slice(0, end)}...`; }
+  makeSeqDropdown(ref) {
+    const { targetTitle } = this.state;
     return (
       <DropdownButton
-        title={title}
+        title={targetTitle}
         bsStyle={'primary'}
         style={{ marginBottom: '10px' }}
         id="select a sequence"
       >
-        {this.makeSeqMenuItems(ref, titleKey)}
+        {this.makeSeqMenuItems(ref)}
+      </DropdownButton>
+    );
+  }
+
+  clickDbItem(seqDbName) {
+    this.setState({ dbTitle: seqDbName });
+  }
+
+  makeDbMenuItems() {
+    return Object.keys(Sequences).map((seqDbName, i) =>
+      <MenuItem
+        key={i}
+        onClick={this.clickDbItem.bind(this, seqDbName)}
+      >
+        {seqDbName}
+      </MenuItem>,
+    );
+  }
+
+  makeDbDropdown() {
+    const { dbTitle } = this.state;
+    return (
+      <DropdownButton
+        title={dbTitle}
+        bsStyle={'primary'}
+        style={{ marginBottom: '10px' }}
+        id="select a sequence database"
+      >
+        {this.makeDbMenuItems()}
       </DropdownButton>
     );
   }
@@ -136,30 +162,20 @@ class AlignInput extends Component {
   render() {
     return (
       <Row style={{ marginTop: '15px' }}>
-        <Col xs={12} sm={6}>
-          {this.makeErrorAlert('errorsA')}
-          {this.makeSeqDropwdown('formA', 'titleA')}
-          <FormGroup controlId="formControlsTextarea">
-            <FormControl
-              ref="formA"
-              componentClass="textarea"
-              placeholder="Or insert sequence 1 here"
-              style={{ height: this.props.height }}
-              onChange={this.handleSequenceChange.bind(this, 'seqA')}
-            />
-          </FormGroup>
+        <Col xs={12}>
+          {this.makeDbDropdown()}
         </Col>
 
-        <Col xs={12} sm={6}>
-          {this.makeErrorAlert('errorsB')}
-          {this.makeSeqDropwdown('formB', 'titleB')}
+        <Col xs={12}>
+          {this.makeErrorAlert('targetErrors')}
+          {this.makeSeqDropdown('targetForm')}
           <FormGroup controlId="formControlsTextarea">
             <FormControl
-              ref="formB"
+              ref="targetForm"
               componentClass="textarea"
-              placeholder="Or insert sequence 2 here"
+              placeholder="Or insert sequence here"
               style={{ height: this.props.height }}
-              onChange={this.handleSequenceChange.bind(this, 'seqB')}
+              onChange={this.handleSequenceChange.bind(this)}
             />
           </FormGroup>
         </Col>
@@ -167,12 +183,12 @@ class AlignInput extends Component {
         <Col xs={12} style={{ textAlign: 'center' }}>
           <ButtonGroup>
             <Button
-              onClick={this.clickAlign.bind(this)}
+              onClick={this.clickAlignSearch.bind(this)}
               bsStyle="accent"
               style={{ margin: '-5px 0px 10px 0px' }}
               disabled={this.state.isLoading}
             >
-              {this.state.isLoading ? 'Aligning...' : 'Align'}
+              {this.state.isLoading ? 'Search Aligning...' : 'Search Align'}
             </Button>
             <OverlayTrigger
               trigger="click"
@@ -202,9 +218,9 @@ class AlignInput extends Component {
   }
 }
 
-AlignInput.propTypes = {
+AlignSearchInput.propTypes = {
   updateOutput: React.PropTypes.func.isRequired,
   height: React.PropTypes.number.isRequired,
 };
 
-export default AlignInput;
+export default AlignSearchInput;
