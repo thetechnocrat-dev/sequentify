@@ -1,8 +1,9 @@
+package routes
+
 import (
 	"encoding/json"
 	"fmt"
 	"github.com/McMenemy/sequentify/api/services/aligner"
-	"github.com/McMenemy/sequentify/api/services/database"
 	"github.com/julienschmidt/httprouter"
 	"log"
 	"net/http"
@@ -57,6 +58,7 @@ func AlignSearchHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 	setCors(w)
 	w.Header().Set("Content-Type", "application/json")
 
+	log.Println("started search align")
 	decoder := json.NewDecoder(r.Body)
 	var alignSearchData AlignSearchData
 	err := decoder.Decode(&alignSearchData)
@@ -78,20 +80,5 @@ func AlignSearchHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Par
 }
 
 func IndexHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-	query :=
-		`INSERT INTO
-			appusers ("username","password")
-		VALUES
-			($1, $2)
-		RETURNING
-			id`
-	var studentID int
-	stmt, err := database.DB.Prepare(query)
-	err = stmt.QueryRow("Lee", "testing").Scan(&studentID)
-	if err != nil {
-		log.Println(err)
-		fmt.Fprintf(w, "This is sequentify's resful API - db query failed")
-	}
-	log.Println(studentID)
-	fmt.Fprintf(w, "This a is sequentify's resftful API: %s", studentID)
+	fmt.Fprintf(w, "This a is sequentify's resftful API")
 }

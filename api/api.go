@@ -13,6 +13,7 @@ func main() {
 	router.GET("/", routes.IndexHandler)
 	router.OPTIONS("/*any", routes.CorsHandler)
 	router.POST("/align", routes.AlignHandler)
+	router.POST("/alignSearch", routes.AlignSearchHandler)
 
 	_, err := database.Init()
 	if err != nil {
