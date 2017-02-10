@@ -18,3 +18,6 @@ $ docker-compose up
 
 The app frontend will be running on localhost 5000 and the api will be running on localhost 3000.
 The dev mode also features frontend hot-reloading and backend reloading on code changes.
+
+## Future Goals
+Allow users to save sequences and custom sequence databases.
