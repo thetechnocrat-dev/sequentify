@@ -51,11 +51,11 @@ class AlignSearchInput extends Component {
       return errors;
     }
 
-    const { targetTitle, matchScore, mismatchPenalty, gapPenalty, gapOpeningPenalty } = this.state;
+    const { dbTitle, matchScore, mismatchPenalty, gapPenalty, gapOpeningPenalty, targetTitle } = this.state;
     const targetSeq = ReactDOM.findDOMNode(this.refs.targetForm).value;
     const targetErrors = validateTargetInput(targetSeq);
     const dbErrors = [];
-    if (targetTitle === 'Select a Database') {
+    if (dbTitle === 'Select a Database') {
       dbErrors.push('Database Selection is Required');
     }
 
@@ -72,7 +72,9 @@ class AlignSearchInput extends Component {
         .then((response) => {
           this.setState({ isLoading: false });
           const scores = response.data.sort((result1, result2) => result1.Score <= result2.Score);
-          this.props.updateOutput(scores);
+          this.props.updateOutput({
+            output: scores, targetSeqName: targetTitle, matchScore, mismatchPenalty, gapPenalty, gapOpeningPenalty,
+          });
         },
       )
         .catch(() => {

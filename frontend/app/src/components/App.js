@@ -15,7 +15,7 @@ class App extends Component {
       windowWidth: window.innerWidth,
       windowHeight: window.innerHeight,
       alignOutput: [''],
-      alignSearchOutput: [''],
+      alignSearchOutput: { output: [''], targetSeqName: '' },
     };
   }
 
@@ -38,6 +38,7 @@ class App extends Component {
   }
 
   render() {
+    const { windowWidth, alignSearchOutput, alignOutput } = this.state;
     let width;
     let minHeight;
     let sectionHeight;
@@ -81,7 +82,7 @@ class App extends Component {
             color: white;
           }
         `}</style>
-        <Helix width={this.state.windowWidth} height={helixHeight} />
+        <Helix width={windowWidth} height={helixHeight} />
         <style type="text/css">{`
           .btn-accent {
             background-color: ${Style.accent};
@@ -104,14 +105,14 @@ class App extends Component {
             <Tabs defaultActiveKey={1} id="alignment tab selection">
               <Tab eventKey={1} title="Pair Alignment">
                 <AlignInput updateOutput={this.updateOutput.bind(this, 'alignOutput')} height={sectionHeight} />
-                <AlignOutput output={this.state.alignOutput} height={sectionHeight} />
+                <AlignOutput output={alignOutput} height={sectionHeight} />
               </Tab>
               <Tab eventKey={2} title="Database Alignment Search">
                 <AlignSearchInput
                   updateOutput={this.updateOutput.bind(this, 'alignSearchOutput')}
                   height={sectionHeight}
                 />
-                <AlignSearchOutput output={this.state.alignSearchOutput} />
+                <AlignSearchOutput {...alignSearchOutput} />
               </Tab>
             </Tabs>
           </Grid>

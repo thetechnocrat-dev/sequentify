@@ -37,7 +37,7 @@ class AlignOutput extends Component {
 
 AlignOutput.propTypes = {
   output: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-  height: React.PropTypes.number.isRequired,
+  height: React.PropTypes.number,
 };
 
 export default AlignOutput;

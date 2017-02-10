@@ -1,3 +1,4 @@
+// temp frontend storage until backend database is implemented
 const sequences = {
   'H2A genes': [
     [
