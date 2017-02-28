@@ -51,7 +51,7 @@ class AlignSearchInput extends Component {
       return errors;
     }
 
-    const { dbTitle, matchScore, mismatchPenalty, gapPenalty, gapOpeningPenalty, targetTitle } = this.state;
+    const { dbTitle, matchScore, mismatchPenalty, gapPenalty, gapOpeningPenalty } = this.state;
     const targetSeq = ReactDOM.findDOMNode(this.refs.targetForm).value;
     const targetErrors = validateTargetInput(targetSeq);
     const dbErrors = [];
@@ -73,7 +73,7 @@ class AlignSearchInput extends Component {
           this.setState({ isLoading: false });
           const scores = response.data.sort((result1, result2) => result1.Score <= result2.Score);
           this.props.updateOutput({
-            output: scores, targetSeqName: targetTitle, matchScore, mismatchPenalty, gapPenalty, gapOpeningPenalty,
+            output: scores, targetSeq, matchScore, mismatchPenalty, gapPenalty, gapOpeningPenalty,
           });
         },
       )

@@ -15,7 +15,7 @@ class App extends Component {
       windowWidth: window.innerWidth,
       windowHeight: window.innerHeight,
       alignOutput: [''],
-      alignSearchOutput: { output: [''], targetSeqName: '' },
+      alignSearchOutput: { output: [''], targetSeq: '' },
     };
   }
 

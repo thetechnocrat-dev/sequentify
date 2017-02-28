@@ -19,7 +19,7 @@ class AlignSearchOutput extends Component {
     this.setState({ showModal: true });
   }
 
-  clickAlignment(seq1Name, seq2Name) {
+  clickAlignment(targetSeq, seq2Name) {
     // this is not optimal because of data structure but will be changed once seqs are moved to backend
     function findSeq(seqName) {
       const sequences = Sequences['H2A genes'];
@@ -35,7 +35,7 @@ class AlignSearchOutput extends Component {
     this.openModal();
     const { matchScore, mismatchPenalty, gapPenalty, gapOpeningPenalty } = this.props;
     axios.post(`${Urls.api}/align`, {
-      SeqA: findSeq(seq1Name),
+      SeqA: targetSeq,
       SeqB: findSeq(seq2Name),
       MatchScore: parseFloat(matchScore),
       MismatchPenalty: parseFloat(mismatchPenalty),
@@ -53,7 +53,7 @@ class AlignSearchOutput extends Component {
   }
 
   makeTableRows() {
-    const { output, targetSeqName } = this.props;
+    const { output, targetSeq } = this.props;
 
     if (output[0] === '') {
       return (
@@ -67,7 +67,7 @@ class AlignSearchOutput extends Component {
       <tr
         key={i}
         style={{ cursor: 'pointer' }}
-        onClick={this.clickAlignment.bind(this, targetSeqName, result.Name)}
+        onClick={this.clickAlignment.bind(this, targetSeq, result.Name)}
       >
         <td>{i + 1}</td>
         <td>{result.Name}</td>
@@ -119,7 +119,7 @@ class AlignSearchOutput extends Component {
 
 AlignSearchOutput.propTypes = {
   output: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-  targetSeqName: React.PropTypes.string.isRequired,
+  targetSeq: React.PropTypes.string.isRequired,
   matchScore: React.PropTypes.number,
   mismatchPenalty: React.PropTypes.number,
   gapPenalty: React.PropTypes.number,
