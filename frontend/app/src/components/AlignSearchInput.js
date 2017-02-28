@@ -23,7 +23,7 @@ class AlignSearchInput extends Component {
       targetTitle: 'Select a Sequence',
       dbTitle: 'Select a Database',
       targetErrors: [],
-      dbErros: [],
+      dbErrors: [],
       matchScore: '2',
       mismatchPenalty: '-6',
       gapPenalty: '-4',
@@ -119,10 +119,13 @@ class AlignSearchInput extends Component {
   }
 
   makeSeqDropdown(ref) {
-    const { targetTitle } = this.state;
+    let title = this.state.targetTitle;
+    const cutoff = 40;
+    const end = title.length > cutoff ? cutoff : title.length;
+    if (end === cutoff) { title = `${title.slice(0, end)}...`; }
     return (
       <DropdownButton
-        title={targetTitle}
+        title={title}
         bsStyle={'primary'}
         style={{ marginBottom: '10px' }}
         id="select a sequence"
@@ -165,6 +168,7 @@ class AlignSearchInput extends Component {
     return (
       <Row style={{ marginTop: '15px' }}>
         <Col xs={12}>
+          {this.makeErrorAlert('dbErrors')}
           {this.makeDbDropdown()}
         </Col>
 

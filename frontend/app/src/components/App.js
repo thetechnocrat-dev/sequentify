@@ -107,7 +107,7 @@ class App extends Component {
                 <AlignInput updateOutput={this.updateOutput.bind(this, 'alignOutput')} height={sectionHeight} />
                 <AlignOutput output={alignOutput} height={sectionHeight} />
               </Tab>
-              <Tab eventKey={2} title="Database Alignment Search">
+              <Tab eventKey={2} title="Alignment Search">
                 <AlignSearchInput
                   updateOutput={this.updateOutput.bind(this, 'alignSearchOutput')}
                   height={sectionHeight}
