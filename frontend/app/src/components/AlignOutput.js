@@ -7,7 +7,7 @@ class AlignOutput extends Component {
     const { output } = this.props;
 
     if (output[0] === '') {
-      return <p style={{ color: '#8e8e8e' }}>Alignment output will appear hear</p>;
+      return <p style={{ color: '#8e8e8e' }}>Alignment output will appear here</p>;
     }
 
     const labelStyle = {
